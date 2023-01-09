@@ -63,8 +63,10 @@ class EventPermissions(BasePermission):
             customer = Customer.objects.get(id=int(request.data['customer']))
             print("cus", customer)
             if request.user.role == "Support":
+                print("request.user.role == Support")
                 return True
             if customer.sales_contact != request.user:
+                print("customer.sales_contact != request.user")
                 return False
         return True
 
@@ -72,8 +74,11 @@ class EventPermissions(BasePermission):
         print("event obj permission")
         customer = Customer.objects.get(id=str(obj.customer.id))
         print("customer", customer)
+        print(request.user.id, obj.support_contact.id, customer.sales_contact.id)
         if request.user.id == obj.support_contact.id or request.user.id == customer.sales_contact.id:
+            print("request.user.id == obj.support_contact.id or request.user.id == customer.sales_contact.id:")
             return True
         elif request.user.role == "Management":
             return True
+        print("false")
         return False

@@ -10,6 +10,10 @@ from .serializers import CustomerListSerializer, CustomerDetailSerializer, Contr
     ContractDetailSerializer, EventListSerializer, EventDetailSerializer
 from authentication.models import User
 from authentication.permissions import CustomerPermissions, ContractPermissions, EventPermissions
+import logging
+
+# Get an instance of a logger
+logger = logging.getLogger(__name__)
 
 
 class CustomerViewSet(ModelViewSet):
@@ -175,10 +179,13 @@ class EventViewSet(ModelViewSet):
             support_contact = User.objects.get(id=request.user.id)
             if support_contact.role == 'Support':
                 instance.sales_contact = support_contact
+        try:
+            instance.event_status = data['event_status']
+        except KeyError:
+            instance.event_status = instance.event_status
 
-        instance.status = data.get('status', instance.status)
-        instance.attendees = data.get('attendees', instance.attendees)
-        instance.notes = data.get('notes', instance.notes)
+        instance.attendees = data['attendees']
+        instance.notes = data['notes']
         serializer = EventDetailSerializer(instance)
         instance.save()
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
