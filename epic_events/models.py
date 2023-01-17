@@ -43,7 +43,10 @@ class Event(models.Model):
         (Resolved, 'Resolved'),
     )
 
-    customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, null=False, related_name='event_customer')
+    # customer = models.ForeignKey(to=Customer, on_delete=models.CASCADE, null=False, related_name='event_customer')
+    contract = models.ForeignKey(to=Contract, on_delete=models.RESTRICT, null=False, default='3', related_name='event_contract')
+    # QUEL TYPE DE DELETE?
+    # MIGRATION + objets créés avant?
     date_created = models.DateField(auto_now_add=True)
     date_updated = models.DateField(auto_now=True)
     support_contact = models.ForeignKey(to=User, on_delete=models.CASCADE, null=False,
@@ -54,7 +57,7 @@ class Event(models.Model):
     notes = models.CharField(max_length=2048)
 
     def __str__(self):
-        return f"Client: {self.customer} | Statut Event: {self.event_status} | Support Contact: {self.support_contact}"
+        return f"Client: {self.contract} | Statut Event: {self.event_status} | Support Contact: {self.support_contact}"
 
 
 # Create your models here.

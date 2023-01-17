@@ -11,7 +11,7 @@ class CustomerAdmin(admin.ModelAdmin):
     form = CustomerCreationForm
 
     list_display = ['sales_contact', 'first_name', 'last_name', 'email', 'phone', 'mobile', 'company_name', 'date_created']
-    list_filter = ['sales_contact', 'company_name']
+    list_filter = ['last_name', 'company_name']
     search_fields = ['first_name', 'last_name']
 
 
@@ -21,7 +21,7 @@ class ContractAdmin(admin.ModelAdmin):
     form = ContractCreationForm
 
     list_display = ['customer', 'sales_contact', 'amount', 'status', 'payment_due']
-    list_filter = ['customer', 'sales_contact', 'amount', 'status', 'payment_due']
+    list_filter = ['customer', 'sales_contact']
     search_fields = ['customer']
 
 
@@ -30,6 +30,7 @@ class EventAdmin(admin.ModelAdmin):
     model = Event
     form = EventCreationForm
 
-    list_display = ['customer', 'support_contact', 'event_status', 'event_date', 'attendees', 'notes']
-    list_filter = ['customer', 'support_contact', 'event_status', 'event_date']
-    search_fields = ['customer']
+    list_display = ['contract', 'support_contact', 'event_status', 'event_date', 'attendees', 'notes']
+    list_filter = ['contract', 'support_contact', 'event_date']
+    search_fields = ['contract']
+    # contract partout

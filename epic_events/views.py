@@ -24,7 +24,7 @@ class CustomerViewSet(ModelViewSet):
     detail_serializer_class = CustomerDetailSerializer
     queryset = Customer.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_fields = ('last_name', 'email')
+    filter_fields = ('last_name', 'company_name')
 
     def create(self, request, *args, **kwargs):
         print("request", request.data)
@@ -84,7 +84,7 @@ class ContractViewSet(ModelViewSet):
     detail_serializer_class = ContractDetailSerializer
     queryset = Contract.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_fields = ('customer', 'date_created', 'amount')
+    filter_fields = ('customer', 'sales_contact')
 
     def create(self, request, *args, **kwargs):
         print(kwargs)
@@ -152,7 +152,7 @@ class EventViewSet(ModelViewSet):
     detail_serializer_class = EventDetailSerializer
     queryset = Event.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
-    filterset_fields = ('event_date', 'customer')
+    filter_fields = ('event_date', 'contract', 'support_contact')
 
     def create(self, request, *args, **kwargs):
         serializer = EventDetailSerializer(data=request.data)
@@ -166,8 +166,10 @@ class EventViewSet(ModelViewSet):
         data = request.data
 
         try:
-            customer = Customer.objects.get(id=data['customer'])
-            instance.customer = customer
+            # customer = Customer.objects.get(id=data['customer'])
+            contract = Contract.objects.get(id=data['contract'])
+            # instance.customer = customer
+            instance.contract = contract
         except KeyError:
             pass
 
@@ -176,6 +178,7 @@ class EventViewSet(ModelViewSet):
             if support_contact.role == 'Support':
                 instance.support_contact = support_contact
         except KeyError:
+            logger.warning('You are recorded as the support_contact for this event')
             support_contact = User.objects.get(id=request.user.id)
             if support_contact.role == 'Support':
                 instance.sales_contact = support_contact

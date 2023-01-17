@@ -1,6 +1,6 @@
 from rest_framework.permissions import BasePermission, SAFE_METHODS
 
-from epic_events.models import Customer, Event
+from epic_events.models import Customer, Event, Contract
 
 
 class CustomerPermissions(BasePermission):
@@ -60,11 +60,14 @@ class EventPermissions(BasePermission):
         print("event permission")
         if request.method == 'POST':
             print("1st if")
-            customer = Customer.objects.get(id=int(request.data['customer']))
+            contract = Contract.objects.get(id=int(request.data['contract']))
+            print("contract post has permission", contract)
+            print("contract.id", contract.id)
+            customer = Customer.objects.get(id=contract.id)
             print("cus", customer)
             if request.user.role == "Support":
                 print("request.user.role == Support")
-                return True
+                return request.method in SAFE_METHODS
             if customer.sales_contact != request.user:
                 print("customer.sales_contact != request.user")
                 return False
@@ -72,13 +75,15 @@ class EventPermissions(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         print("event obj permission")
-        customer = Customer.objects.get(id=str(obj.customer.id))
-        print("customer", customer)
-        print(request.user.id, obj.support_contact.id, customer.sales_contact.id)
-        if request.user.id == obj.support_contact.id or request.user.id == customer.sales_contact.id:
-            print("request.user.id == obj.support_contact.id or request.user.id == customer.sales_contact.id:")
+        print(request.data)
+        contract = Contract.objects.get(id=str(obj.contract.id))
+        print("contrat obj", contract)
+        print(request.user.id, obj.support_contact.id, contract.sales_contact.id)
+        if request.user.id == obj.support_contact.id or request.user.id == contract.sales_contact.id:
+            print("request.user.id == obj.support_contact.id or request.user.id == contract.sales_contact.id:")
             return True
         elif request.user.role == "Management":
+            print("management")
             return True
         print("false")
         return False
