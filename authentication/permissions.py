@@ -69,7 +69,7 @@ class EventPermissions(BasePermission):
                 print("request.user.role == Support")
                 return request.method in SAFE_METHODS
             if customer.sales_contact != request.user:
-                print("customer.sales_contact != request.user")
+                print("customer.sales_contact != request.user", customer.sales_contact, request.user)
                 return False
         return True
 
